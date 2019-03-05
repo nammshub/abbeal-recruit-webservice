@@ -1,6 +1,7 @@
 package com.abbeal.recruitwebservice.controllers;
 
-import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,31 +11,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abbeal.recruitwebservice.entities.User;
-import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
-import com.abbeal.recruitwebservice.services.UserService;
+import com.abbeal.recruitwebservice.entities.Question;
+import com.abbeal.recruitwebservice.services.QuestionService;
 
 @RestController
-public class UserController {
+public class QuestionController {
 	
 	@Autowired
-	UserService userService;
+	QuestionService questionService;
 
+	@GetMapping("/questions")
+	Set<Question> findAllQuestion() {
+		return questionService.findAll();
+	}
 	
-	@GetMapping("/users")
-	List<User> findAllUsers() {
-		return userService.findAll();
+	@GetMapping("/questions/{field}")
+	Set<Question> findAllQuestionByField(@PathVariable String field) {
+		return questionService.findAllByField(field);
 	}
-
-	@GetMapping("/users/{id}")
-	User findUser(@PathVariable String id) throws UserNotPresentException {
-		return userService.find(id);
-	}
-
-	@PostMapping("/users")
-	ResponseEntity<HttpStatus> createUser(@RequestBody User user) {
-		userService.save(user);
+	
+	@PostMapping("/questions")
+	ResponseEntity<HttpStatus> createUser(@RequestBody Question question) {
+		questionService.save(question);
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
-
 }

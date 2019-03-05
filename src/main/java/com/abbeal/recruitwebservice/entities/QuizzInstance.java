@@ -3,11 +3,17 @@ package com.abbeal.recruitwebservice.entities;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * 
@@ -25,15 +31,23 @@ public class QuizzInstance {
 
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
-	@JsonIgnore
+	@JsonIgnoreProperties("quizzInstances")
 	private Quizz quizz;
 	@ManyToOne()
-	@JsonIgnore
+	@JsonIgnoreProperties("quizzInstances")
 	private User candidate;
 	private LocalDateTime creationDate;
+	@OneToMany(mappedBy="quizzInstance",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("quizzInstance")
+	private Set<ActualQuestion> actualQuestions;
+	@Transient
+	private String quizzName;
+	@Transient
+	private String candidateMail;
 
 	public QuizzInstance() {
 		super();
+		this.creationDate = LocalDateTime.now();
 	}
 
 	public QuizzInstance(Quizz quizz, User candidate) {
@@ -58,5 +72,55 @@ public class QuizzInstance {
 	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
+	
+	public String getQuizzName() {
+		return quizzName;
+	}
 
+	public void ListQuizzName(String quizzName) {
+		this.quizzName = quizzName;
+	}
+
+	public String getCandidateMail() {
+		return candidateMail;
+	}
+
+	public void ListCandidateMail(String candidateMail) {
+		this.candidateMail = candidateMail;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setQuizz(Quizz quizz) {
+		this.quizz = quizz;
+	}
+
+	public void setCandidate(User candidate) {
+		this.candidate = candidate;
+	}
+
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public void setQuizzName(String quizzName) {
+		this.quizzName = quizzName;
+	}
+
+	public void setCandidateMail(String candidateMail) {
+		this.candidateMail = candidateMail;
+	}
+
+	public Set<ActualQuestion> getActualQuestions() {
+		return actualQuestions;
+	}
+
+	public void setActualQuestions(Set<ActualQuestion> actualQuestions) {
+		this.actualQuestions = actualQuestions;
+	}
+
+	
+	
 }

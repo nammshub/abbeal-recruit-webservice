@@ -8,12 +8,14 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Entity
@@ -24,14 +26,18 @@ public class Quizz {
 	private LocalDateTime creationDate;
 	private boolean isActive;
 	@ManyToOne()
-	@JsonIgnore
 	private User creator;
-	@OneToMany(mappedBy="quizz",cascade = CascadeType.ALL)
-	private Set<QuizzInstance> quizzInstances;
-	@OneToMany(mappedBy="quizz", cascade = CascadeType.ALL)
-	private Set<QuizzContent> quizzContents;
+	@OneToMany(mappedBy="quizz",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("quizz")
+	private Set<QuizzInstance> quizzInstances = new HashSet<>();
+	@OneToMany(mappedBy="quizz", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("quizz")
+	private Set<QuizzContent> quizzContents = new HashSet<>();
+	@Transient
+	private String creatorIdentity;
 	
-	public Quizz(){}
+	public Quizz(){
+	}
 	
 	
 	public Quizz(String name, User creator, LocalDateTime creationDate, boolean isActive, Set<QuizzContent> quizzContents) {
@@ -45,11 +51,11 @@ public class Quizz {
 
 
 	public Quizz(String name, User creator) {
+		super();
 		this.name = name;
 		this.creator = creator;
 		this.creationDate = LocalDateTime.now();
 		this.isActive = true;
-		this.quizzContents = new HashSet<>();
 	}
 	
 
@@ -86,12 +92,47 @@ public class Quizz {
 	}
 
 
-	public void setCreator(User creator) {
+	public void ListCreator(User creator) {
 		this.creator = creator;
 	}
 	
 	public Set<QuizzInstance> getQuizzInstances() {
 		return quizzInstances;
+	}
+
+
+	public void ListQuizzInstances(Set<QuizzInstance> quizzInstances) {
+		this.quizzInstances = quizzInstances;
+	}
+
+
+	public void ListQuizzContents(Set<QuizzContent> quizzContents) {
+		this.quizzContents = quizzContents;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 
 
@@ -104,5 +145,17 @@ public class Quizz {
 		this.quizzContents = quizzContents;
 	}
 
+
+	public String getCreatorIdentity() {
+		return creatorIdentity;
+	}
+
+
+	public void setCreatorIdentity(String creatorIdentity) {
+		this.creatorIdentity = creatorIdentity;
+	}
+
+	
+	
 	
 }
