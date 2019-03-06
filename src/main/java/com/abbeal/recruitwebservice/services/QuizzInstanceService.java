@@ -1,10 +1,8 @@
 package com.abbeal.recruitwebservice.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
-import org.springframework.lang.Nullable;
-
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.entities.User;
@@ -17,6 +15,6 @@ public interface QuizzInstanceService {
 
 	Set<QuizzInstance> findAllByQuizz(Quizz q);
 
-	QuizzInstance getNewInstance(String quizzId, @Nullable String candidateMail) throws QuizzNotPresentException, NotEnoughQuestionsException;
+	QuizzInstance getNewInstance(String quizzId, Optional<String> candidateMail) throws QuizzNotPresentException, NotEnoughQuestionsException;
 
 }

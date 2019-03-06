@@ -1,6 +1,9 @@
 package com.abbeal.recruitwebservice.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abbeal.recruitwebservice.dtos.UserDto;
 import com.abbeal.recruitwebservice.entities.User;
 import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
 import com.abbeal.recruitwebservice.services.UserService;
@@ -19,22 +23,34 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+    private ModelMapper modelMapper;
 
 	
 	@GetMapping("/users")
-	List<User> findAllUsers() {
-		return userService.findAll();
+	public List<UserDto> findAllUsers() {
+		List<User> users = userService.findAll();
+		return users.parallelStream().map(this::convertToDto).collect(Collectors.toList());
 	}
 
 	@GetMapping("/users/{id}")
-	User findUser(@PathVariable String id) throws UserNotPresentException {
-		return userService.find(id);
+	public UserDto findUser(@PathVariable String id) throws UserNotPresentException {
+		return convertToDto(userService.find(id));
 	}
 
 	@PostMapping("/users")
-	ResponseEntity<HttpStatus> createUser(@RequestBody User user) {
-		userService.save(user);
+	public ResponseEntity<HttpStatus> createUser(@RequestBody UserDto user) {
+		userService.save(convertToEntity(user));
 		return ResponseEntity.ok(HttpStatus.OK);
+	}
+	
+	private UserDto convertToDto(User u) {
+		return modelMapper.map(u, UserDto.class);
+	}
+	
+	private User convertToEntity(UserDto u) {
+		return modelMapper.map(u, User.class);
 	}
 
 }

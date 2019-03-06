@@ -18,16 +18,16 @@ import com.abbeal.recruitwebservice.repositories.QuizzRepository;
 
 @Component
 public class QuizzServiceImpl implements QuizzService {
-	
+
 	@Autowired
 	QuizzRepository quizzRepository;
-	
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	QuizzContentService quizzContentService;
-	
+
 	@Autowired
 	QuizzInstanceService quizzInstanceService;
 
@@ -37,28 +37,15 @@ public class QuizzServiceImpl implements QuizzService {
 		quizzList.parallelStream().forEach(q -> {
 			if (q.getQuizzInstances() != null) {
 				Set<QuizzInstance> quizzInstances = q.getQuizzInstances();
-				quizzInstances.parallelStream().forEach(i -> {
-					i.ListCandidateMail(i.getCandidate().getMail());
-					i.ListQuizzName(q.getName());
-				});
-				q.ListQuizzInstances(quizzInstances);
+				q.setQuizzInstances(quizzInstances);
 			}
-			q.setCreatorIdentity(new StringBuilder(u.getFirstName()).append(' ').append(u.getLastName()).toString());
 		});
 		return quizzList;
 	}
 
 	@Override
 	public List<Quizz> findAll() {
-		List<Quizz> allQuizz = quizzRepository.findAll();
-		allQuizz.parallelStream().forEach(q -> {
-			Set<QuizzContent> quizzContents = quizzContentService.findAllByQuizz(q);
-			q.setQuizzContents(quizzContents);
-			Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
-			q.setQuizzInstances(quizzInstances);
-			q.setCreatorIdentity(new StringBuilder(q.getCreator().getFirstName()).append(' ').append(q.getCreator().getLastName()).toString());
-		});
-		return allQuizz;
+		return quizzRepository.findAll();
 	}
 
 	@Override
@@ -70,7 +57,6 @@ public class QuizzServiceImpl implements QuizzService {
 			q.setQuizzContents(quizzContents);
 			Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
 			q.setQuizzInstances(quizzInstances);
-			q.setCreatorIdentity(new StringBuilder(q.getCreator().getFirstName()).append(' ').append(q.getCreator().getLastName()).toString());
 		});
 		return allQuizz;
 	}
@@ -79,16 +65,16 @@ public class QuizzServiceImpl implements QuizzService {
 	public Quizz save(Quizz quizz, String userId) throws UserNotPresentException {
 		User creator = userService.find(userId);
 		quizz.setCreator(creator);
-		Quizz toSave = new Quizz(quizz.getName(),creator);
+		Quizz toSave = new Quizz(quizz.getName(), creator);
 		Quizz resultQuizz = quizzRepository.save(toSave);
-		quizzContentService.saveAll(new ArrayList<>(quizz.getQuizzContents()),resultQuizz);
+		quizzContentService.saveAll(new ArrayList<>(quizz.getQuizzContents()), resultQuizz);
 		return toSave;
 	}
 
 	@Override
 	public Quizz find(String id) throws QuizzNotPresentException {
 		Optional<Quizz> optionnalQuizz = quizzRepository.findById(Long.parseLong(id));
-		if(!optionnalQuizz.isPresent()) {
+		if (!optionnalQuizz.isPresent()) {
 			throw new QuizzNotPresentException(id);
 		}
 		Quizz q = optionnalQuizz.get();
@@ -96,11 +82,7 @@ public class QuizzServiceImpl implements QuizzService {
 		q.setQuizzContents(quizzContents);
 		Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
 		q.setQuizzInstances(quizzInstances);
-		q.setCreatorIdentity(new StringBuilder(q.getCreator().getFirstName()).append(' ').append(q.getCreator().getLastName()).toString());
-	
 		return q;
 	}
 
-	
-	
 }

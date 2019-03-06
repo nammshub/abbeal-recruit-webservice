@@ -2,6 +2,7 @@ package com.abbeal.recruitwebservice.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -38,55 +39,47 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 
 	@Override
 	public List<QuizzInstance> findAllByCandidate(User u) {
-		List<QuizzInstance> quizzInstanceList = quizzInstanceRepository.findByCandidate(u);
-		quizzInstanceList.parallelStream().forEach(q -> {
-			q.setCandidateMail(u.getMail());
-			q.setQuizzName(q.getQuizz().getName());
-		});
-		return quizzInstanceList;
+		return quizzInstanceRepository.findByCandidate(u);
 	}
 
 	@Override
 	public Set<QuizzInstance> findAllByQuizz(Quizz q) {
-		Set<QuizzInstance> quizzInstances = new HashSet<>(quizzInstanceRepository.findByQuizz(q));
-		quizzInstances.parallelStream().forEach(i -> {
-			i.ListCandidateMail(i.getCandidate().getMail());
-			i.ListQuizzName(q.getName());
-		});
-		return quizzInstances;
-
+		return new HashSet<>(quizzInstanceRepository.findByQuizz(q));
 	}
 
 	@Override
-	public QuizzInstance getNewInstance(String quizzId, String candidateMail)
+	public QuizzInstance getNewInstance(String quizzId, Optional<String> candidateMail)
 			throws QuizzNotPresentException, NotEnoughQuestionsException {
 		Quizz quizz = quizzService.find(quizzId);
 		QuizzInstance quizzInstance = new QuizzInstance();
-		quizzInstance.setQuizz(quizz);
+		quizzInstance.setActualQuestions(getRandomQuestions(quizz, quizzInstance));
+		quizzInstance.setCandidate(prepareCandidate(candidateMail));
+		return quizzInstance;
+	}
 
+	private User prepareCandidate(Optional<String> candidateMail) {
+		User candidate = new User();
+		if (candidateMail.isPresent()) {
+			try {
+				candidate = userService.findByMail(candidateMail.get());
+			} catch (UserMailNotPresentException e) {
+				log.warn(e.getMessage(), e);
+				candidate.setMail(candidateMail.get());
+			}
+		}
+		return candidate;
+	}
+
+	private Set<ActualQuestion> getRandomQuestions(Quizz quizz, QuizzInstance quizzInstance)
+			throws NotEnoughQuestionsException {
 		// generate random questions
 		Set<Question> randomQuestions = questionService.findRandomQuestionsByQuizz(quizz);
 		Set<ActualQuestion> actualQuestions = new HashSet<>();
 		randomQuestions.parallelStream().forEach(q -> {
 			ActualQuestion actualQuestion = new ActualQuestion(quizzInstance, q);
-			actualQuestion.setQuestionStatement(q.getStatement());
-			actualQuestion.setQuizzName(quizz.getName());
 			actualQuestions.add(actualQuestion);
 		});
-		quizzInstance.setActualQuestions(actualQuestions);
-		User candidate = new User();
-		if (candidateMail != null) {
-			quizzInstance.setCandidateMail(candidateMail);
-			try {
-				candidate = userService.findByMail(candidateMail);
-			} catch (UserMailNotPresentException e) {
-				log.warn(e.getMessage(), e);
-				candidate.setMail(candidateMail);
-			}
-		}
-		quizzInstance.setCandidate(candidate);
-		quizzInstance.setQuizzName(quizz.getName());
-		return quizzInstance;
+		return actualQuestions;
 	}
 
 }

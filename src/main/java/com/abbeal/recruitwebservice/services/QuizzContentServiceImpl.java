@@ -19,14 +19,13 @@ public class QuizzContentServiceImpl implements QuizzContentService {
 
 	@Override
 	public void saveAll(List<QuizzContent> quizzContents, Quizz resultQuizz) {
-		quizzContents.stream().forEach(q -> q.ListQuizz(resultQuizz));
+		quizzContents.stream().forEach(q -> q.setQuizz(resultQuizz));
 		quizzContentRepository.saveAll(quizzContents);
 	}
 
 	@Override
 	public Set<QuizzContent> findAllByQuizz(Quizz q) {
-		Set<QuizzContent> quizzContentList = new HashSet<QuizzContent>(quizzContentRepository.findByQuizz(q));
-		return quizzContentList;
+		return new HashSet<>(quizzContentRepository.findByQuizz(q));
 	}
 
 	

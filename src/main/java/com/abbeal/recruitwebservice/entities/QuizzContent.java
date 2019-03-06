@@ -8,8 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.abbeal.recruitwebservice.Difficulty;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 @Entity
@@ -18,7 +16,6 @@ public class QuizzContent {
 
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
-	@JsonIgnoreProperties("quizzContents")
 	private Quizz quizz;
 	private String field;
 	@Enumerated(EnumType.STRING)
@@ -36,29 +33,4 @@ public class QuizzContent {
 	public QuizzContent() {
 		super();
 	}
-	
-	public Long getId() {
-		return id;
-	}
-
-	public Quizz getQuizz() {
-		return quizz;
-	}
-
-	public String getField() {
-		return field;
-	}
-
-	public Difficulty getDifficulty() {
-		return difficulty;
-	}
-
-	public int getNumber() {
-		return number;
-	}
-	
-	public void ListQuizz(Quizz quizz) {
-		this.quizz = quizz;
-	}
-
 }

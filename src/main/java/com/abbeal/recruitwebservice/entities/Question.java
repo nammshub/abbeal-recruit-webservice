@@ -6,13 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.abbeal.recruitwebservice.Difficulty;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 @Data
@@ -24,13 +23,9 @@ public class Question {
 	@Enumerated(EnumType.STRING)
 	private Difficulty difficulty;
 	private String statement;
-	@OneToMany(mappedBy="question",cascade = CascadeType.ALL)
-	@JsonIgnoreProperties("question")
+	@OneToMany(mappedBy="question",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Answer> answers;
-	
-	
-	@OneToMany(mappedBy="question",cascade = CascadeType.ALL)
-	@JsonIgnoreProperties("question")
+	@OneToMany(mappedBy="question",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<ActualQuestion> actualQuestions;
 	
 	
@@ -67,72 +62,4 @@ public class Question {
 		this.difficulty = difficulty;
 		this.statement = statement;
 	}
-
-
-
-	public Long getId() {
-		return id;
-	}
-
-
-
-	public String getField() {
-		return field;
-	}
-
-
-
-	public void setField(String field) {
-		this.field = field;
-	}
-
-
-
-	public Difficulty getDifficulty() {
-		return difficulty;
-	}
-
-
-
-	public void setDifficulty(Difficulty difficulty) {
-		this.difficulty = difficulty;
-	}
-
-
-
-	public String getStatement() {
-		return statement;
-	}
-
-
-
-	public void setStatement(String statement) {
-		this.statement = statement;
-	}
-
-
-
-	public Set<Answer> getAnswers() {
-		return answers;
-	}
-
-
-
-	public void setAnswers(Set<Answer> answers) {
-		this.answers = answers;
-	}
-
-
-
-	public Set<ActualQuestion> getActualQuestions() {
-		return actualQuestions;
-	}
-
-
-
-	public void setActualQuestions(Set<ActualQuestion> actualQuestions) {
-		this.actualQuestions = actualQuestions;
-	}
-
-
 }

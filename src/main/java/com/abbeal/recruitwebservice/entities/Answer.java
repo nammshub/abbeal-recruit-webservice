@@ -4,16 +4,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Answer {
 	
 	private @Id @GeneratedValue Long id;
 	private String statement;
 	private boolean isCorrect;
 	@ManyToOne()
-	@JsonIgnoreProperties("answers")
 	private Question question;
 	
 	
@@ -27,34 +29,4 @@ public class Answer {
 		this.isCorrect = isCorrect;
 		this.question = question;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getStatement() {
-		return statement;
-	}
-
-	public void setStatement(String statement) {
-		this.statement = statement;
-	}
-
-	public boolean isCorrect() {
-		return isCorrect;
-	}
-
-	public void setCorrect(boolean isCorrect) {
-		this.isCorrect = isCorrect;
-	}
-
-	public Question getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-	
-	
 }

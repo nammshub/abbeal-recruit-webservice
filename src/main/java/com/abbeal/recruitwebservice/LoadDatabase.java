@@ -1,7 +1,5 @@
 package com.abbeal.recruitwebservice;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +26,6 @@ import com.abbeal.recruitwebservice.repositories.QuizzRepository;
 import com.abbeal.recruitwebservice.repositories.UserRepository;
 
 @Configuration
-@Slf4j
 class LoadDatabase {
 	
 	Logger log = LoggerFactory.getLogger(LoadDatabase.class);

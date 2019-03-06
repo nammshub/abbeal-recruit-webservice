@@ -6,8 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.abbeal.recruitwebservice.entities.Quizz;
-import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.entities.User;
 import com.abbeal.recruitwebservice.exceptions.UserMailNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
@@ -27,14 +25,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public List<User> findAll() {
-		List<User> users = userRepository.findAll();
-		users.parallelStream().forEach(u -> {
-			List<Quizz> quizz = quizzService.findAllByCreator(u);
-			u.ListQuizz(quizz);
-			List<QuizzInstance> quizzInstances = quizzInstanceService.findAllByCandidate(u);
-			u.ListQuizzInstances(quizzInstances);
-		});
-		return users;
+		return userRepository.findAll();
 	}
 
 	@Override
@@ -43,10 +34,7 @@ public class UserServiceImpl implements UserService {
 		if (!user.isPresent()) {
 			throw new UserNotPresentException(id);
 		}
-		User u = user.get();
-		u.ListQuizz(quizzService.findAllByCreator(u));
-		u.ListQuizzInstances(quizzInstanceService.findAllByCandidate(u));
-		return u;
+		return user.get();
 	}
 
 	@Override
@@ -60,10 +48,7 @@ public class UserServiceImpl implements UserService {
 		if (!user.isPresent()) {
 			throw new UserMailNotPresentException(candidateMail);
 		}
-		User u = user.get();
-		u.ListQuizz(quizzService.findAllByCreator(u));
-		u.ListQuizzInstances(quizzInstanceService.findAllByCandidate(u));
-		return u;
+		return user.get();
 	}
 	
 	
