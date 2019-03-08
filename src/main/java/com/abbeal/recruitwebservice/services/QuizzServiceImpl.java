@@ -85,4 +85,15 @@ public class QuizzServiceImpl implements QuizzService {
 		return q;
 	}
 
+	@Override
+	public Quizz activate(String id, boolean state) throws QuizzNotPresentException {
+		Optional<Quizz> optionnalQuizz = quizzRepository.findById(Long.parseLong(id));
+		if (!optionnalQuizz.isPresent()) {
+			throw new QuizzNotPresentException(id);
+		}
+		Quizz q = optionnalQuizz.get();
+		q.setActive(state);
+		return quizzRepository.save(q);
+	}
+
 }

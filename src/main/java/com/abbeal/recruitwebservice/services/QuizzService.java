@@ -16,4 +16,6 @@ public interface QuizzService {
 	List<Quizz> findAllByCreator(String id) throws UserNotPresentException;
 
 	Quizz save(Quizz quizz, String userId) throws UserNotPresentException;
+
+	Quizz activate(String id, boolean state) throws QuizzNotPresentException;
 }
