@@ -1,5 +1,6 @@
 package com.abbeal.recruitwebservice.services;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.abbeal.recruitwebservice.entities.Question;
@@ -15,5 +16,7 @@ public interface QuestionService {
 	Question save(Question question);
 
 	Set<Question> findRandomQuestionsByQuizz(Quizz quizz) throws NotEnoughQuestionsException;
+
+	Optional<Question> find(Long id);
 
 }

@@ -10,12 +10,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.abbeal.recruitwebservice.dtos.AnswerDto;
+import com.abbeal.recruitwebservice.dtos.QuestionDto;
+import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
 import com.abbeal.recruitwebservice.entities.ActualQuestion;
+import com.abbeal.recruitwebservice.entities.Answer;
 import com.abbeal.recruitwebservice.entities.Question;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.exceptions.AnswerNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
+import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.UserMailNotPresentException;
 import com.abbeal.recruitwebservice.repositories.QuizzInstanceRepository;
@@ -36,6 +42,12 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	ActualQuestionService actualQuestionService;
+
+	@Autowired
+	AnswerService answerService;
 
 	@Override
 	public List<QuizzInstance> findAllByCandidate(User u) {
@@ -80,6 +92,42 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 			actualQuestions.add(actualQuestion);
 		});
 		return actualQuestions;
+	}
+
+	@Override
+	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited) throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
+		Quizz quizz = quizzService.find(Long.toString(quizzSubmited.getQuizzId()));
+		User candidate;
+		try {
+			candidate = userService.findByMail(quizzSubmited.getCandidateMail());
+		} catch (UserMailNotPresentException e) {
+			User newUser = new User(quizzSubmited.getCandidateMail());
+			candidate = userService.save(newUser);
+		}
+		Set<ActualQuestion> actualQuestions = new HashSet<>();
+		QuizzInstance quizzInstance = saveQuizzInstance(quizz, candidate);
+		for (QuestionDto question : quizzSubmited.getQuestions()) {
+			Optional<Question> q = questionService.find(question.getId());
+			if (!q.isPresent()) {
+				throw new QuestionNotPresentException(Long.toString(question.getId()));
+			}
+			for (AnswerDto answer : question.getAnswers()) {
+				Optional<Answer> a = answerService.find(answer.getId());
+				if (!a.isPresent()) {
+					throw new AnswerNotPresentException(Long.toString(answer.getId()));
+				}
+				actualQuestions.add(new ActualQuestion(quizzInstance, q.get(), a.get()));
+			}
+		}
+		
+		actualQuestionService.saveAll(actualQuestions);
+		return quizzInstance;
+	}
+
+	@Override
+	public QuizzInstance saveQuizzInstance(Quizz quizz, User candidate) {
+		QuizzInstance quizzInstance = new QuizzInstance(quizz, candidate);
+		return quizzInstanceRepository.save(quizzInstance);
 	}
 
 }

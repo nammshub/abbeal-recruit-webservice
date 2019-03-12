@@ -1,6 +1,7 @@
 package com.abbeal.recruitwebservice.services;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class AnswerServiceImpl implements AnswerService {
 	public void saveAll(Set<Answer> answers, Question question) {
 		answers.stream().forEach(a -> a.setQuestion(question));
 		answerRepository.saveAll(new ArrayList<>(answers));
+	}
+
+	@Override
+	public Optional<Answer> find(Long id) {
+		return answerRepository.findById(id);
 	}
 
 }

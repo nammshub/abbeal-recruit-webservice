@@ -3,6 +3,7 @@ package com.abbeal.recruitwebservice.services;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,11 @@ public class QuestionServiceImpl implements QuestionService{
 	    Collections.shuffle(allQuestions);
 	    questions.addAll(allQuestions.subList(0, number));
 		return questions;
+	}
+
+	@Override
+	public Optional<Question> find(Long id) {
+		return questionRepository.findById(id);
 	}
 
 	
