@@ -2,8 +2,10 @@ package com.abbeal.recruitwebservice.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.abbeal.recruitwebservice.dtos.AnswerDto;
+import com.abbeal.recruitwebservice.dtos.DtoUtil;
 import com.abbeal.recruitwebservice.dtos.QuestionDto;
+import com.abbeal.recruitwebservice.dtos.QuestionResultDto;
 import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
 import com.abbeal.recruitwebservice.entities.ActualQuestion;
 import com.abbeal.recruitwebservice.entities.Answer;
@@ -22,6 +26,7 @@ import com.abbeal.recruitwebservice.entities.User;
 import com.abbeal.recruitwebservice.exceptions.AnswerNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
 import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
+import com.abbeal.recruitwebservice.exceptions.QuizzInstanceNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.UserMailNotPresentException;
 import com.abbeal.recruitwebservice.repositories.QuizzInstanceRepository;
@@ -48,6 +53,9 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 
 	@Autowired
 	AnswerService answerService;
+
+	@Autowired
+	DtoUtil dtoUtil;
 
 	@Override
 	public List<QuizzInstance> findAllByCandidate(User u) {
@@ -95,7 +103,8 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	}
 
 	@Override
-	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited) throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
+	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited)
+			throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
 		Quizz quizz = quizzService.find(Long.toString(quizzSubmited.getQuizzId()));
 		User candidate;
 		try {
@@ -111,6 +120,9 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 			if (!q.isPresent()) {
 				throw new QuestionNotPresentException(Long.toString(question.getId()));
 			}
+			if (question.getAnswers().isEmpty()) {
+				actualQuestions.add(new ActualQuestion(quizzInstance, q.get(), null));
+			}
 			for (AnswerDto answer : question.getAnswers()) {
 				Optional<Answer> a = answerService.find(answer.getId());
 				if (!a.isPresent()) {
@@ -119,7 +131,7 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 				actualQuestions.add(new ActualQuestion(quizzInstance, q.get(), a.get()));
 			}
 		}
-		
+
 		actualQuestionService.saveAll(actualQuestions);
 		return quizzInstance;
 	}
@@ -128,6 +140,35 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	public QuizzInstance saveQuizzInstance(Quizz quizz, User candidate) {
 		QuizzInstance quizzInstance = new QuizzInstance(quizz, candidate);
 		return quizzInstanceRepository.save(quizzInstance);
+	}
+
+	@Override
+	public Set<QuestionResultDto> getQuizzInstanceResult(long quizzInstanceId) throws QuizzInstanceNotPresentException {
+		QuizzInstance quizzInstance = this.findById(quizzInstanceId);
+		Set<QuestionResultDto> questionResults = new HashSet<>();
+		Map<Question, List<ActualQuestion>> actualsPerQuestion = quizzInstance.getActualQuestions().stream()
+				.collect(Collectors.groupingBy(ActualQuestion::getQuestion));
+		actualsPerQuestion.forEach((question, candidateAnswers) -> {
+			QuestionResultDto questionResult = new QuestionResultDto();
+			questionResult.setQuestion(dtoUtil.convertToDto(question));
+			questionResult.setCandidateAnswers(candidateAnswers.stream()
+					.map(actual -> dtoUtil.convertToDto(actual.getAnswer())).collect(Collectors.toSet()));
+			questionResult.setResult(questionResult.getQuestion().getAnswers().stream()
+					.filter(AnswerDto::isCorrect).count() == questionResult.getCandidateAnswers().stream()
+							.filter(AnswerDto::isCorrect).count() ? Byte.parseByte("1") : Byte.parseByte("0"));
+			questionResults.add(questionResult);
+		});
+
+		return questionResults;
+	}
+
+	@Override
+	public QuizzInstance findById(long id) throws QuizzInstanceNotPresentException {
+		Optional<QuizzInstance> optional = quizzInstanceRepository.findById(id);
+		if (!optional.isPresent()) {
+			throw new QuizzInstanceNotPresentException(id);
+		}
+		return optional.get();
 	}
 
 }

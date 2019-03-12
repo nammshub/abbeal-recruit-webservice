@@ -30,14 +30,14 @@ public class QuizzInstance {
 
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
-	@JsonIgnoreProperties("quizzInstances")
+	//@JsonIgnoreProperties("quizzInstances")
 	private Quizz quizz;
 	@ManyToOne()
-	@JsonIgnoreProperties("quizzInstances")
+	//@JsonIgnoreProperties("quizzInstances")
 	private User candidate;
 	private LocalDateTime creationDate;
 	@OneToMany(mappedBy="quizzInstance",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JsonIgnoreProperties("quizzInstance")
+	//@JsonIgnoreProperties("quizzInstance")
 	private Set<ActualQuestion> actualQuestions;
 
 	public QuizzInstance() {

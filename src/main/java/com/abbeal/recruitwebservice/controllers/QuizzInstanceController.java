@@ -1,6 +1,7 @@
 package com.abbeal.recruitwebservice.controllers;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abbeal.recruitwebservice.dtos.QuestionResultDto;
 import com.abbeal.recruitwebservice.dtos.QuizzInstanceCandidateDto;
 import com.abbeal.recruitwebservice.dtos.QuizzInstanceDto;
 import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
@@ -20,6 +22,7 @@ import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.exceptions.AnswerNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
 import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
+import com.abbeal.recruitwebservice.exceptions.QuizzInstanceNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 import com.abbeal.recruitwebservice.services.QuizzInstanceService;
 
@@ -52,6 +55,12 @@ public class QuizzInstanceController {
 		QuizzInstanceDto savezQuizzInstance = convertToIdDto(
 				quizzInstanceService.saveSubmitedQuizz(quizzSubmited));
 		return ResponseEntity.status(HttpStatus.OK).body(savezQuizzInstance);
+	}
+	
+	@GetMapping("/quizz-instances/results/{quizzInstanceId}")
+	public ResponseEntity<Set<QuestionResultDto>> getQuizzInstanceResult(@PathVariable long quizzInstanceId) throws QuizzInstanceNotPresentException{
+		Set<QuestionResultDto> questionResults = quizzInstanceService.getQuizzInstanceResult(quizzInstanceId);
+		return ResponseEntity.status(HttpStatus.OK).body(questionResults);
 	}
 
 	private QuizzInstanceCandidateDto convertToDto(QuizzInstance u) {

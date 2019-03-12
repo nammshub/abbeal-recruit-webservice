@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
+import org.springframework.lang.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -18,6 +21,7 @@ public class ActualQuestion {
 	private Question question;
 	@ManyToOne()
 	@JsonIgnoreProperties("actualQuestions")  
+	@Nullable
 	private Answer answer = new Answer();
 	
 	
