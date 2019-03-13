@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * 
@@ -34,7 +33,7 @@ public class QuizzInstance {
 	private Quizz quizz;
 	@ManyToOne()
 	//@JsonIgnoreProperties("quizzInstances")
-	private User candidate;
+	private Utilisateur candidate;
 	private LocalDateTime creationDate;
 	@OneToMany(mappedBy="quizzInstance",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	//@JsonIgnoreProperties("quizzInstance")
@@ -45,7 +44,7 @@ public class QuizzInstance {
 		this.creationDate = LocalDateTime.now();
 	}
 
-	public QuizzInstance(Quizz quizz, User candidate) {
+	public QuizzInstance(Quizz quizz, Utilisateur candidate) {
 		super();
 		this.quizz = quizz;
 		this.candidate = candidate;

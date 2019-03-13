@@ -2,12 +2,12 @@ package com.abbeal.recruitwebservice.services;
 
 import java.util.List;
 import com.abbeal.recruitwebservice.entities.Quizz;
-import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.entities.Utilisateur;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
 
 public interface QuizzService {
-	List<Quizz> findAllByCreator(User u);
+	List<Quizz> findAllByCreator(Utilisateur u);
 
 	List<Quizz> findAll();
 	

@@ -22,7 +22,7 @@ import com.abbeal.recruitwebservice.entities.Answer;
 import com.abbeal.recruitwebservice.entities.Question;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
-import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.entities.Utilisateur;
 import com.abbeal.recruitwebservice.exceptions.AnswerNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
 import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
@@ -46,7 +46,7 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	QuestionService questionService;
 
 	@Autowired
-	UserService userService;
+	UtilisateurService userService;
 
 	@Autowired
 	ActualQuestionService actualQuestionService;
@@ -58,7 +58,7 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	DtoUtil dtoUtil;
 
 	@Override
-	public List<QuizzInstance> findAllByCandidate(User u) {
+	public List<QuizzInstance> findAllByCandidate(Utilisateur u) {
 		return quizzInstanceRepository.findByCandidate(u);
 	}
 
@@ -77,8 +77,8 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 		return quizzInstance;
 	}
 
-	private User prepareCandidate(Optional<String> candidateMail) {
-		User candidate = new User();
+	private Utilisateur prepareCandidate(Optional<String> candidateMail) {
+		Utilisateur candidate = new Utilisateur();
 		if (candidateMail.isPresent()) {
 			try {
 				candidate = userService.findByMail(candidateMail.get());
@@ -106,11 +106,11 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited)
 			throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
 		Quizz quizz = quizzService.find(Long.toString(quizzSubmited.getQuizzId()));
-		User candidate;
+		Utilisateur candidate;
 		try {
 			candidate = userService.findByMail(quizzSubmited.getCandidateMail());
 		} catch (UserMailNotPresentException e) {
-			User newUser = new User(quizzSubmited.getCandidateMail());
+			Utilisateur newUser = new Utilisateur(quizzSubmited.getCandidateMail());
 			candidate = userService.save(newUser);
 		}
 		Set<ActualQuestion> actualQuestions = new HashSet<>();
@@ -137,7 +137,7 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	}
 
 	@Override
-	public QuizzInstance saveQuizzInstance(Quizz quizz, User candidate) {
+	public QuizzInstance saveQuizzInstance(Quizz quizz, Utilisateur candidate) {
 		QuizzInstance quizzInstance = new QuizzInstance(quizz, candidate);
 		return quizzInstanceRepository.save(quizzInstance);
 	}

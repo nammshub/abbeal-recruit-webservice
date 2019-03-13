@@ -25,7 +25,7 @@ public class Quizz {
 	private LocalDateTime creationDate;
 	private boolean isActive;
 	@ManyToOne()
-	private User creator;
+	private Utilisateur creator;
 	@OneToMany(mappedBy="quizz",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<QuizzInstance> quizzInstances = new HashSet<>();
 	@OneToMany(mappedBy="quizz", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -37,7 +37,7 @@ public class Quizz {
 	}
 	
 	
-	public Quizz(String name, User creator, LocalDateTime creationDate, boolean isActive, Set<QuizzContent> quizzContents) {
+	public Quizz(String name, Utilisateur creator, LocalDateTime creationDate, boolean isActive, Set<QuizzContent> quizzContents) {
 		super();
 		this.name = name;
 		this.creator = creator;
@@ -47,7 +47,7 @@ public class Quizz {
 	}
 
 
-	public Quizz(String name, User creator) {
+	public Quizz(String name, Utilisateur creator) {
 		super();
 		this.name = name;
 		this.creator = creator;
@@ -56,7 +56,7 @@ public class Quizz {
 	}
 	
 
-	public Quizz(String name,User creator, Set<QuizzContent>quizzContents) {
+	public Quizz(String name,Utilisateur creator, Set<QuizzContent>quizzContents) {
 		this.name = name;
 		this.creator = creator;
 		this.creationDate = LocalDateTime.now();

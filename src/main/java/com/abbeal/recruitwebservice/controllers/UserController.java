@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abbeal.recruitwebservice.dtos.UserDto;
-import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.entities.Utilisateur;
 import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
-import com.abbeal.recruitwebservice.services.UserService;
+import com.abbeal.recruitwebservice.services.UtilisateurService;
 
 @RestController
 public class UserController {
 	
 	@Autowired
-	UserService userService;
+	UtilisateurService userService;
 	
 	@Autowired
     private ModelMapper modelMapper;
@@ -30,7 +30,7 @@ public class UserController {
 	
 	@GetMapping("/users")
 	public List<UserDto> findAllUsers() {
-		List<User> users = userService.findAll();
+		List<Utilisateur> users = userService.findAll();
 		return users.parallelStream().map(this::convertToDto).collect(Collectors.toList());
 	}
 
@@ -45,12 +45,12 @@ public class UserController {
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
 	
-	private UserDto convertToDto(User u) {
+	private UserDto convertToDto(Utilisateur u) {
 		return modelMapper.map(u, UserDto.class);
 	}
 	
-	private User convertToEntity(UserDto u) {
-		return modelMapper.map(u, User.class);
+	private Utilisateur convertToEntity(UserDto u) {
+		return modelMapper.map(u, Utilisateur.class);
 	}
 
 }

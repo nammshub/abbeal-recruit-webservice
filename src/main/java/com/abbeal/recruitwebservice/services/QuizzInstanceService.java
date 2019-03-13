@@ -8,7 +8,7 @@ import com.abbeal.recruitwebservice.dtos.QuestionResultDto;
 import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
-import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.entities.Utilisateur;
 import com.abbeal.recruitwebservice.exceptions.AnswerNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
 import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
@@ -17,7 +17,7 @@ import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 
 public interface QuizzInstanceService {
 
-	List<QuizzInstance> findAllByCandidate(User u);
+	List<QuizzInstance> findAllByCandidate(Utilisateur u);
 
 	Set<QuizzInstance> findAllByQuizz(Quizz q);
 	
@@ -27,7 +27,7 @@ public interface QuizzInstanceService {
 
 	QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited) throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException;
 	
-	QuizzInstance saveQuizzInstance(Quizz quizz, User candidate);
+	QuizzInstance saveQuizzInstance(Quizz quizz, Utilisateur candidate);
 
 	Set<QuestionResultDto> getQuizzInstanceResult(long quizzInstanceId) throws QuizzInstanceNotPresentException;
 

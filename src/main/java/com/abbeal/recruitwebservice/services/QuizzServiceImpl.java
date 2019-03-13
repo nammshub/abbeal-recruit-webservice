@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzContent;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
-import com.abbeal.recruitwebservice.entities.User;
+import com.abbeal.recruitwebservice.entities.Utilisateur;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.UserNotPresentException;
 import com.abbeal.recruitwebservice.repositories.QuizzRepository;
@@ -23,7 +23,7 @@ public class QuizzServiceImpl implements QuizzService {
 	QuizzRepository quizzRepository;
 
 	@Autowired
-	UserService userService;
+	UtilisateurService userService;
 
 	@Autowired
 	QuizzContentService quizzContentService;
@@ -32,7 +32,7 @@ public class QuizzServiceImpl implements QuizzService {
 	QuizzInstanceService quizzInstanceService;
 
 	@Override
-	public List<Quizz> findAllByCreator(User u) {
+	public List<Quizz> findAllByCreator(Utilisateur u) {
 		List<Quizz> quizzList = quizzRepository.findByCreator(u);
 		quizzList.parallelStream().forEach(q -> {
 			if (q.getQuizzInstances() != null) {
@@ -50,7 +50,7 @@ public class QuizzServiceImpl implements QuizzService {
 
 	@Override
 	public List<Quizz> findAllByCreator(String id) throws UserNotPresentException {
-		User u = userService.find(id);
+		Utilisateur u = userService.find(id);
 		List<Quizz> allQuizz = quizzRepository.findByCreator(u);
 		allQuizz.parallelStream().forEach(q -> {
 			Set<QuizzContent> quizzContents = quizzContentService.findAllByQuizz(q);
@@ -63,7 +63,7 @@ public class QuizzServiceImpl implements QuizzService {
 
 	@Override
 	public Quizz save(Quizz quizz, String userId) throws UserNotPresentException {
-		User creator = userService.find(userId);
+		Utilisateur creator = userService.find(userId);
 		quizz.setCreator(creator);
 		Quizz toSave = new Quizz(quizz.getName(), creator);
 		Quizz resultQuizz = quizzRepository.save(toSave);

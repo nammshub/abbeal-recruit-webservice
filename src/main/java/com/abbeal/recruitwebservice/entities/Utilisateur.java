@@ -12,12 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Entity
-public class User {
+public class Utilisateur {
 	
 	private @Id @GeneratedValue Long id;
 	private String firstName;
@@ -36,18 +35,18 @@ public class User {
 	
 	
 
-	public User() {
+	public Utilisateur() {
 		super();
 	}
 
 
-	public User(String mail) {
+	public Utilisateur(String mail) {
 		super();
 		this.mail = mail;
 	}
 
 
-	public User(String firstName, String lastName, String mail, String phoneNumber) {
+	public Utilisateur(String firstName, String lastName, String mail, String phoneNumber) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
