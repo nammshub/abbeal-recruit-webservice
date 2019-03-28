@@ -1,4 +1,4 @@
-package com.abbeal.recruitwebservice;
+package com.abbeal.recruitwebservice.security;
 
 /*
 import javax.sql.DataSource;

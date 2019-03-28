@@ -1,4 +1,4 @@
-package com.abbeal.recruitwebservice;
+package com.abbeal.recruitwebservice.configurations;
 
 import org.springframework.context.annotation.*;
 
