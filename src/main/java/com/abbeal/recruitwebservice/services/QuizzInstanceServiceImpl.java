@@ -28,7 +28,6 @@ import com.abbeal.recruitwebservice.exceptions.NotEnoughQuestionsException;
 import com.abbeal.recruitwebservice.exceptions.QuestionNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.QuizzInstanceNotPresentException;
 import com.abbeal.recruitwebservice.exceptions.QuizzNotPresentException;
-import com.abbeal.recruitwebservice.exceptions.UserMailNotPresentException;
 import com.abbeal.recruitwebservice.repositories.QuizzInstanceRepository;
 
 @Component
@@ -80,10 +79,11 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	private Utilisateur prepareCandidate(Optional<String> candidateMail) {
 		Utilisateur candidate = new Utilisateur();
 		if (candidateMail.isPresent()) {
-			try {
-				candidate = userService.findByMail(candidateMail.get());
-			} catch (UserMailNotPresentException e) {
-				log.warn(e.getMessage(), e);
+
+			Optional<Utilisateur> user = userService.findByMail(candidateMail.get());
+			if (user.isPresent()) {
+				candidate = user.get();
+			} else {
 				candidate.setMail(candidateMail.get());
 			}
 		}
@@ -106,10 +106,14 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited)
 			throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
 		Quizz quizz = quizzService.find(Long.toString(quizzSubmited.getQuizzId()));
-		Utilisateur candidate;
-		try {
-			candidate = userService.findByMail(quizzSubmited.getCandidateMail());
-		} catch (UserMailNotPresentException e) {
+		Utilisateur candidate = null;
+
+		Optional<Utilisateur> user = userService.findByMail(quizzSubmited.getCandidateMail());
+		if (user.isPresent()) {
+			candidate = user.get();
+		}
+
+		else {
 			Utilisateur newUser = new Utilisateur(quizzSubmited.getCandidateMail());
 			candidate = userService.save(newUser);
 		}
@@ -153,9 +157,10 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 			questionResult.setQuestion(dtoUtil.convertToDto(question));
 			questionResult.setCandidateAnswers(candidateAnswers.stream()
 					.map(actual -> dtoUtil.convertToDto(actual.getAnswer())).collect(Collectors.toSet()));
-			questionResult.setResult(questionResult.getQuestion().getAnswers().stream()
-					.filter(AnswerDto::isCorrect).count() == questionResult.getCandidateAnswers().stream()
-							.filter(AnswerDto::isCorrect).count() ? Byte.parseByte("1") : Byte.parseByte("0"));
+			questionResult.setResult(questionResult.getQuestion().getAnswers().stream().filter(AnswerDto::isCorrect)
+					.count() == questionResult.getCandidateAnswers().stream().filter(AnswerDto::isCorrect).count()
+							? Byte.parseByte("1")
+							: Byte.parseByte("0"));
 			questionResults.add(questionResult);
 		});
 

@@ -1,4 +1,4 @@
-package com.abbeal.recruitwebservice;
+package com.abbeal.recruitwebservice.dtos;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

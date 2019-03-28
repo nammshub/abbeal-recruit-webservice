@@ -3,7 +3,6 @@ package com.abbeal.recruitwebservice.dtos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.abbeal.recruitwebservice.NullTolerantMapper;
 import com.abbeal.recruitwebservice.entities.Answer;
 import com.abbeal.recruitwebservice.entities.Question;
 

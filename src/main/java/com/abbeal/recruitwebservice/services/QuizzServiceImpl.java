@@ -50,24 +50,30 @@ public class QuizzServiceImpl implements QuizzService {
 
 	@Override
 	public List<Quizz> findAllByCreator(String id) throws UserNotPresentException {
-		Utilisateur u = userService.find(id);
-		List<Quizz> allQuizz = quizzRepository.findByCreator(u);
-		allQuizz.parallelStream().forEach(q -> {
-			Set<QuizzContent> quizzContents = quizzContentService.findAllByQuizz(q);
-			q.setQuizzContents(quizzContents);
-			Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
-			q.setQuizzInstances(quizzInstances);
-		});
+		Optional<Utilisateur> u = userService.find(id);
+		List<Quizz> allQuizz = new ArrayList<>();
+		if (u.isPresent()) {
+			quizzRepository.findByCreator(u.get());
+			allQuizz.parallelStream().forEach(q -> {
+				Set<QuizzContent> quizzContents = quizzContentService.findAllByQuizz(q);
+				q.setQuizzContents(quizzContents);
+				Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
+				q.setQuizzInstances(quizzInstances);
+			});
+		}
 		return allQuizz;
 	}
 
 	@Override
 	public Quizz save(Quizz quizz, String userId) throws UserNotPresentException {
-		Utilisateur creator = userService.find(userId);
-		quizz.setCreator(creator);
-		Quizz toSave = new Quizz(quizz.getName(), creator);
-		Quizz resultQuizz = quizzRepository.save(toSave);
-		quizzContentService.saveAll(new ArrayList<>(quizz.getQuizzContents()), resultQuizz);
+		Optional<Utilisateur> creator = userService.find(userId);
+		Quizz toSave = null;
+		if (creator.isPresent()) {
+			quizz.setCreator(creator.get());
+			toSave = new Quizz(quizz.getName(), creator.get());
+			Quizz resultQuizz = quizzRepository.save(toSave);
+			quizzContentService.saveAll(new ArrayList<>(quizz.getQuizzContents()), resultQuizz);
+		}
 		return toSave;
 	}
 

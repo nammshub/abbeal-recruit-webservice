@@ -30,6 +30,7 @@ public class Utilisateur {
 	@OneToMany(mappedBy="candidate",cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("candidate")
 	private List<QuizzInstance> quizzInstances;
+	private String password;
 	
 	
 	

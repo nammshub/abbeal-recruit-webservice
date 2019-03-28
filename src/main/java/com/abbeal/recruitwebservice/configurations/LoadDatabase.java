@@ -1,4 +1,4 @@
-package com.abbeal.recruitwebservice;
+package com.abbeal.recruitwebservice.configurations;
 
 import java.util.ArrayList;
 import java.util.HashSet;

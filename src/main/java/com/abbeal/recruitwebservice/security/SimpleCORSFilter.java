@@ -1,4 +1,4 @@
-package com.abbeal.recruitwebservice;
+package com.abbeal.recruitwebservice.security;
 
 import java.io.IOException;
 
@@ -17,15 +17,12 @@ import org.springframework.stereotype.Component;
 public class SimpleCORSFilter implements Filter {
 	Logger log = LoggerFactory.getLogger(SimpleCORSFilter.class);
 
+	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletResponse response = (HttpServletResponse) res;
-		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH");
-		response.setHeader("Access-Control-Max-Age", "3600");
-		response.setHeader("Access-Control-Allow-Headers", "x-requested-with,  Content-Type");
-		response.setHeader("Access-Control-Expose-Headers", "Authorization");
 		response.setHeader("Content-Type", "application/json");
-		chain.doFilter(req, res);
+		chain.doFilter(req, response);
 	}
+	
 }
