@@ -1,5 +1,7 @@
 package com.abbeal.recruitwebservice.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,8 +14,12 @@ import lombok.Data;
 
 @Entity
 @Data
-public class QuizzContent {
+public class QuizzContent implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8983863249939856560L;
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
 	private Quizz quizz;

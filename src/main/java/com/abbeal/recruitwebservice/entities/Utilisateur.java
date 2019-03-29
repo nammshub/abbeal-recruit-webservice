@@ -3,6 +3,7 @@ package com.abbeal.recruitwebservice.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,7 +17,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Entity
-public class Utilisateur {
+public class Utilisateur implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2275012728499046724L;
 	
 	private @Id @GeneratedValue Long id;
 	private String firstName;
@@ -27,9 +33,6 @@ public class Utilisateur {
 	@OneToMany(mappedBy="creator",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("creator")
 	private List<Quizz> quizz;
-	@OneToMany(mappedBy="candidate",cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
-	@JsonIgnoreProperties("candidate")
-	private List<QuizzInstance> quizzInstances;
 	private String password;
 	
 	

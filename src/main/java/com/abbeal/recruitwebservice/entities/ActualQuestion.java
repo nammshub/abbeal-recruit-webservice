@@ -1,5 +1,7 @@
 package com.abbeal.recruitwebservice.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,8 +12,12 @@ import org.springframework.lang.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-public class ActualQuestion {
+public class ActualQuestion  implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3415405611161134220L;
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
 	@JsonIgnoreProperties("actualQuestions")  

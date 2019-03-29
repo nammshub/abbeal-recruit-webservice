@@ -1,5 +1,6 @@
 package com.abbeal.recruitwebservice.entities;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,8 +17,12 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Question {
+public class Question  implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8892507838335871876L;
 	private @Id @GeneratedValue Long id;
 	private String field;
 	@Enumerated(EnumType.STRING)

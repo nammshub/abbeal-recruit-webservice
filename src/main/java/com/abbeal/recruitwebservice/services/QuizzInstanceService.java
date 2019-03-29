@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.abbeal.recruitwebservice.dtos.QuestionResultDto;
 import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
+import com.abbeal.recruitwebservice.entities.Candidate;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.entities.Utilisateur;
@@ -27,7 +28,7 @@ public interface QuizzInstanceService {
 
 	QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited) throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException;
 	
-	QuizzInstance saveQuizzInstance(Quizz quizz, Utilisateur candidate);
+	QuizzInstance saveQuizzInstance(Quizz quizz, Candidate candidate);
 
 	Set<QuestionResultDto> getQuizzInstanceResult(long quizzInstanceId) throws QuizzInstanceNotPresentException;
 

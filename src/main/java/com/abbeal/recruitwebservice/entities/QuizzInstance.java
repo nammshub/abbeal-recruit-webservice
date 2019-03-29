@@ -2,6 +2,7 @@ package com.abbeal.recruitwebservice.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -25,18 +26,19 @@ import javax.persistence.OneToMany;
  */
 @Data
 @Entity
-public class QuizzInstance {
+public class QuizzInstance  implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8840076909902397693L;
 	private @Id @GeneratedValue Long id;
 	@ManyToOne()
-	//@JsonIgnoreProperties("quizzInstances")
 	private Quizz quizz;
 	@ManyToOne()
-	//@JsonIgnoreProperties("quizzInstances")
-	private Utilisateur candidate;
+	private Candidate candidate;
 	private LocalDateTime creationDate;
 	@OneToMany(mappedBy="quizzInstance",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	//@JsonIgnoreProperties("quizzInstance")
 	private Set<ActualQuestion> actualQuestions;
 
 	public QuizzInstance() {
@@ -44,7 +46,7 @@ public class QuizzInstance {
 		this.creationDate = LocalDateTime.now();
 	}
 
-	public QuizzInstance(Quizz quizz, Utilisateur candidate) {
+	public QuizzInstance(Quizz quizz, Candidate candidate) {
 		super();
 		this.quizz = quizz;
 		this.candidate = candidate;

@@ -3,6 +3,7 @@ package com.abbeal.recruitwebservice.entities;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,8 +19,12 @@ import javax.persistence.OneToMany;
 @Getter
 @Setter
 @Entity
-public class Quizz {
+public class Quizz  implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6604532198099889603L;
 	private @Id @GeneratedValue Long id;
 	private String name;
 	private LocalDateTime creationDate;

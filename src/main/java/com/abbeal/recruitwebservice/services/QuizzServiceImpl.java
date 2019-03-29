@@ -53,13 +53,7 @@ public class QuizzServiceImpl implements QuizzService {
 		Optional<Utilisateur> u = userService.find(id);
 		List<Quizz> allQuizz = new ArrayList<>();
 		if (u.isPresent()) {
-			quizzRepository.findByCreator(u.get());
-			allQuizz.parallelStream().forEach(q -> {
-				Set<QuizzContent> quizzContents = quizzContentService.findAllByQuizz(q);
-				q.setQuizzContents(quizzContents);
-				Set<QuizzInstance> quizzInstances = quizzInstanceService.findAllByQuizz(q);
-				q.setQuizzInstances(quizzInstances);
-			});
+			allQuizz = quizzRepository.findByCreator(u.get());
 		}
 		return allQuizz;
 	}

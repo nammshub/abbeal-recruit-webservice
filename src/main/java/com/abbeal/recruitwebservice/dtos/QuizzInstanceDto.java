@@ -10,6 +10,6 @@ public class QuizzInstanceDto {
 	
 	private Long id;
 	private QuizzDto quizz;
-	private UserDto candidate;
+	private CandidateDto candidate;
 	private LocalDateTime creationDate;
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class QuizzInstanceCandidateDto {
 
-	private UserDto candidate;
+	private CandidateDto candidate;
 	private LocalDateTime creationDate = LocalDateTime.now();
 	private Set<ActualQuestionDto> actualQuestions;
 	

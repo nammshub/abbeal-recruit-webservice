@@ -13,4 +13,6 @@ public interface UtilisateurService {
 	Utilisateur save(Utilisateur user);
 
 	Optional<Utilisateur> findByMail(String candidateMail);
+	
+	Optional<Utilisateur> getAuthenticatedUser();
 }

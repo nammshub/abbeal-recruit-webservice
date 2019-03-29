@@ -9,6 +9,9 @@ import com.abbeal.recruitwebservice.entities.QuizzInstance;
 import com.abbeal.recruitwebservice.entities.Utilisateur;
 
 public interface QuizzInstanceRepository extends JpaRepository<QuizzInstance, Long>{
+	
+	@SuppressWarnings("unchecked")
+	QuizzInstance save(QuizzInstance instance);
 
 	List<QuizzInstance> findByQuizz(Quizz quizz);
 

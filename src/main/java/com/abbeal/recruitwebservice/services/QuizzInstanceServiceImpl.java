@@ -19,6 +19,7 @@ import com.abbeal.recruitwebservice.dtos.QuestionResultDto;
 import com.abbeal.recruitwebservice.dtos.QuizzSubmitDto;
 import com.abbeal.recruitwebservice.entities.ActualQuestion;
 import com.abbeal.recruitwebservice.entities.Answer;
+import com.abbeal.recruitwebservice.entities.Candidate;
 import com.abbeal.recruitwebservice.entities.Question;
 import com.abbeal.recruitwebservice.entities.Quizz;
 import com.abbeal.recruitwebservice.entities.QuizzInstance;
@@ -55,6 +56,9 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 
 	@Autowired
 	DtoUtil dtoUtil;
+	
+	@Autowired
+	CandidateService candidateService;
 
 	@Override
 	public List<QuizzInstance> findAllByCandidate(Utilisateur u) {
@@ -76,11 +80,11 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 		return quizzInstance;
 	}
 
-	private Utilisateur prepareCandidate(Optional<String> candidateMail) {
-		Utilisateur candidate = new Utilisateur();
+	private Candidate prepareCandidate(Optional<String> candidateMail) {
+		Candidate candidate = new Candidate();
 		if (candidateMail.isPresent()) {
 
-			Optional<Utilisateur> user = userService.findByMail(candidateMail.get());
+			Optional<Candidate> user = candidateService.findByMail(candidateMail.get());
 			if (user.isPresent()) {
 				candidate = user.get();
 			} else {
@@ -106,19 +110,19 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	public QuizzInstance saveSubmitedQuizz(QuizzSubmitDto quizzSubmited)
 			throws QuizzNotPresentException, QuestionNotPresentException, AnswerNotPresentException {
 		Quizz quizz = quizzService.find(Long.toString(quizzSubmited.getQuizzId()));
-		Utilisateur candidate = null;
+		Candidate candidate = null;
 
-		Optional<Utilisateur> user = userService.findByMail(quizzSubmited.getCandidateMail());
-		if (user.isPresent()) {
-			candidate = user.get();
+		Optional<Candidate> optional = candidateService.findByMail(quizzSubmited.getCandidateMail());
+		if (optional.isPresent()) {
+			candidate = optional.get();
 		}
 
 		else {
-			Utilisateur newUser = new Utilisateur(quizzSubmited.getCandidateMail());
-			candidate = userService.save(newUser);
+			Candidate newCandidate = new Candidate(quizzSubmited.getCandidateMail());
+			candidate = candidateService.save(newCandidate);
 		}
 		Set<ActualQuestion> actualQuestions = new HashSet<>();
-		QuizzInstance quizzInstance = saveQuizzInstance(quizz, candidate);
+		QuizzInstance quizzInstance = this.saveQuizzInstance(quizz, candidate);
 		for (QuestionDto question : quizzSubmited.getQuestions()) {
 			Optional<Question> q = questionService.find(question.getId());
 			if (!q.isPresent()) {
@@ -141,7 +145,7 @@ public class QuizzInstanceServiceImpl implements QuizzInstanceService {
 	}
 
 	@Override
-	public QuizzInstance saveQuizzInstance(Quizz quizz, Utilisateur candidate) {
+	public QuizzInstance saveQuizzInstance(Quizz quizz, Candidate candidate) {
 		QuizzInstance quizzInstance = new QuizzInstance(quizz, candidate);
 		return quizzInstanceRepository.save(quizzInstance);
 	}
